@@ -1,0 +1,42 @@
+// This is a comment in Particle
+let greeting = "Hello, World!"
+print $greeting
+
+print "This is a display message."
+
+// Variable declaration and conditional logic
+let number = 4
+if number > 5
+    print "Number is greater than 5."
+else
+    print "Number is 5 or less."
+end
+
+// Matching patterns
+match "hello" with "hello world" as val
+if val
+    print yay! val = True!
+else
+    print noooo! val = False!
+end
+print $val
+
+<?php
+$directory = '.'; // Replace with the actual directory path
+$blockedFiles = ['index.php', 'syntax.php'];
+
+// Get all PHP files in the directory
+$phpFiles = glob($directory . '/*.php');
+
+// Strip certain files from the list
+$phpFiles = array_filter($phpFiles, function ($file) use ($blockedFiles) {
+    return !in_array(basename($file), $blockedFiles);
+});
+
+// Generate HTML links for each PHP file
+foreach ($phpFiles as $phpFile) {
+    $fileName = basename($phpFile);
+    $link = '<a style="font-size:2em;text-decoration:none;color:rgb(74,222,128);" href="' . $phpFile . '">' . $fileName . '</a>';
+    echo $link . '<br>';
+}
+?>
