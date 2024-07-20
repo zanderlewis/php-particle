@@ -7,14 +7,21 @@ function compile($tokens, $fileName)
         switch ($token['type']) {
             case 'php_start':
                 // Remove the opening tag
-
                 break;
             case 'endphp':
                 // Remove the closing tag
-
                 break;
             case 'php':
                 $phpCode .= $token['value'] . "\n";
+                break;
+            case 'html_start':
+                // Remove the opening tag
+                break;
+            case 'html_end':
+                // Remove the closing tag
+                break;
+            case 'html':
+                $phpCode .= "echo \"" . addslashes($token['value']) . "\";\n";
                 break;
             case 'print':
                 // Check if the value is a variable by looking for a leading $

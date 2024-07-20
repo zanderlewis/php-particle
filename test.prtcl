@@ -2,7 +2,7 @@
 let greeting = "Hello, World!"
 print $greeting
 
-print "This is a display message."
+echo "This is a display message."
 
 // Variable declaration and conditional logic
 let number = 4
@@ -21,22 +21,13 @@ else
 end
 print $val
 
+print hello from Particle!
+
 <?php
-$directory = '.'; // Replace with the actual directory path
-$blockedFiles = ['index.php', 'syntax.php'];
+echo 'hello from php!';
+echo '<br>';
+?>
 
-// Get all PHP files in the directory
-$phpFiles = glob($directory . '/*.php');
-
-// Strip certain files from the list
-$phpFiles = array_filter($phpFiles, function ($file) use ($blockedFiles) {
-    return !in_array(basename($file), $blockedFiles);
-});
-
-// Generate HTML links for each PHP file
-foreach ($phpFiles as $phpFile) {
-    $fileName = basename($phpFile);
-    $link = '<a style="font-size:2em;text-decoration:none;color:rgb(74,222,128);" href="' . $phpFile . '">' . $fileName . '</a>';
-    echo $link . '<br>';
-}
+<?html
+<h1>Hello from HTML!</h1>
 ?>
