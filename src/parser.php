@@ -23,7 +23,7 @@ function parse($code)
         } elseif (!$inPHP && !$inHTML) {
             if (preg_match('/print\s+(.*)/', $line, $matches) || preg_match('/echo\s+(.*)/', $line, $matches)) {
                 $tokens[] = ['type' => 'print', 'value' => $matches[1]];
-            } elseif (preg_match('/match\s+"([^"]+)"\s+with\s+"([^"]+)"(?:\s+as\s+([a-zA-Z_][a-zA-Z0-9_]*))?/', $line, $matches)) {
+            } elseif (preg_match('/match\s+"([^"]+)"\s+in\s+"([^"]+)"(?:\s+as\s+([a-zA-Z_][a-zA-Z0-9_]*))?/', $line, $matches)) {
                 $token = [
                     'type' => 'match',
                     'pattern' => $matches[1],
@@ -38,10 +38,9 @@ function parse($code)
                 $tokens[] = ['type' => 'comment', 'value' => $matches[1]];
             } elseif (trim($line) === '') {
                 // Ignore empty lines
-
-            } elseif /* Variables */ (preg_match('/and\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(.*)/', $line, $matches)) {
+            } elseif /* Variables */ (preg_match('/var\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(.*)/', $line, $matches)) {
                 $tokens[] = ['type' => 'variable', 'name' => $matches[1], 'value' => $matches[2]];
-            } elseif /* If statement */ (preg_match('/if\s+(.*)/', $line, $matches)) {
+            } elseif /* If statement */ (preg_match('/^if\s+(.*)/', $line, $matches)) {
                 // Extract the condition and transform variables for PHP
                 $condition = $matches[1];
                 // Replace variable names (assuming they don't start with a number and are alphanumeric + underscore)
@@ -50,10 +49,21 @@ function parse($code)
                     return '$' . $match[1];
                 }, $condition);
                 $tokens[] = ['type' => 'if', 'condition' => $condition];
+            } elseif /* Else if statement */ (preg_match('/^elif\s+(.*)/', $line, $matches)) {
+                // Extract the condition and transform variables for PHP
+                $condition = $matches[1];
+                // Replace variable names (assuming they don't start with a number and are alphanumeric + underscore)
+                $condition = preg_replace_callback('/\b([a-zA-Z_][a-zA-Z0-9_]*)\b/', function ($match) {
+                    // Prefix variables with $
+                    return '$' . $match[1];
+                }, $condition);
+                $tokens[] = ['type' => 'elif', 'condition' => $condition];
             } elseif /* Else statement */ (preg_match('/else/', $line, $matches)) {
                 $tokens[] = ['type' => 'else'];
             } elseif /* End statement */ (preg_match('/end/', $line, $matches)) {
                 $tokens[] = ['type' => 'end'];
+            } elseif /* Import statement */ (preg_match('/import\s' . '(.*)/', $line, $matches)) {
+                $tokens[] = ['type' => 'import', 'path' => $matches[1]];
             } else {
                 // Handle unrecognized lines
                 echo "Error: Unrecognized line '$line'\n";

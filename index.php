@@ -1,6 +1,6 @@
 <?php
-$directory = '.'; // Replace with the actual directory path
-$blockedFiles = ['index.php']; // Files to exclude from the list
+$directory = 'particle'; // Replace with the actual directory path
+$blockedFiles = []; // Files to exclude from the list
 
 // Get all PHP files in the directory
 $phpFiles = glob($directory . '/*.php');

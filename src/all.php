@@ -10,21 +10,41 @@ if ($argc < 2 || !endswith($argv[1], '.prtcl')) {
     exit(1);
 }
 
-// Use the first command-line argument as the .particle file path
-$particleFilePath = $argv[1];
-
-// Ensure the file exists before attempting to read
-if (!file_exists($particleFilePath)) {
-    echo "Error: File not found at '{$particleFilePath}'\n";
-    exit(1);
+// Check for flags
+$flags = [];
+for ($i = 2; $i < $argc; $i++) {
+    if (startswith($argv[$i], '-')) {
+        $flags[] = substr($argv[$i], 1);
+    }
 }
 
-// Read from the provided .particle file
-$userCode = file_get_contents($particleFilePath);
+// -m flag: Mass compile all .prtcl files in the directory
+if (in_array('m', $flags)) {
+    $directory = dirname($argv[1]);
+    $files = glob($directory . '/*.prtcl');
+    foreach ($files as $file) {
+        $userCode = file_get_contents($file);
+        $particleFileName = pathinfo($file, PATHINFO_FILENAME);
+        $tokens = parse($userCode);
+        compile($tokens, $particleFileName);
+    }
+    exit(0);
+} else {
+    // Use the first command-line argument as the .particle file path
+    $particleFilePath = $argv[1];
 
-// Get the filename
-$particleFileName = pathinfo($particleFilePath, PATHINFO_FILENAME);
+    // Ensure the file exists before attempting to read
+    if (!file_exists($particleFilePath)) {
+        echo "Error: File not found at '{$particleFilePath}'\n";
+        exit(1);
+    }
 
-// Assuming parse() and compile() functions are defined earlier in the script
-$tokens = parse($userCode);
-compile($tokens, $particleFileName); // This function should already generate and write the PHP code to 'output.php'
+    // Read from the provided .particle file
+    $userCode = file_get_contents($particleFilePath);
+
+    // Get the filename
+    $particleFileName = pathinfo($particleFilePath, PATHINFO_FILENAME);
+
+    $tokens = parse($userCode);
+    compile($tokens, $particleFileName);
+}

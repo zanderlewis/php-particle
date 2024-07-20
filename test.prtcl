@@ -1,3 +1,4 @@
+import imported.prtcl
 // This is a comment in Particle
 var greeting = "Hello, World!"
 print $greeting
@@ -8,12 +9,14 @@ echo "This is a display message."
 var number = 4
 if number > 5
     print "Number is greater than 5."
+elif number == 5
+    print "Number is 5."
 else
-    print "Number is 5 or less."
+    print "Number is less than 5."
 end
 
 // Matching patterns
-match "hello" with "hello world" as val
+match "hello" in "hello world" as val
 if val
     print yay! val = True!
 else
@@ -28,6 +31,8 @@ echo 'hello from php!';
 echo '<br>';
 ?>
 
+var language = "HTML"
+
 <?html
-<h1>Hello from HTML!</h1>
+<h1>Hello from {{$language}}!</h1>
 ?>

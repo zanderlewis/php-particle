@@ -3,25 +3,45 @@
 function compile($tokens, $fileName)
 {
     $phpCode = "<?php\n";
+    $inHtmlBlock = false;
+    $htmlContent = '';
     foreach ($tokens as $token) {
         switch ($token['type']) {
-            case 'php_start':
-                // Remove the opening tag
-                break;
-            case 'endphp':
-                // Remove the closing tag
-                break;
             case 'php':
-                $phpCode .= $token['value'] . "\n";
+                if ($inHtmlBlock) {
+                    $htmlContent .= "<?php " . $token['value'] . " ?>\n";
+                } else {
+                    $phpCode .= $token['value'] . "\n";
+                }
                 break;
             case 'html_start':
-                // Remove the opening tag
+                $inHtmlBlock = true;
+                $htmlContent = '';
                 break;
             case 'html_end':
-                // Remove the closing tag
+                $inHtmlBlock = false;
+                // Process the HTML content for templating
+                $processedHtmlContent = preg_replace_callback('/\{\{(.+?)\}\}/', function ($matches) {
+                    // Correctly concatenate the PHP variable
+                    return htmlspecialchars($matches[1]);
+                }, $htmlContent);
+                $phpCode .= "echo \"" . addslashes($processedHtmlContent) . "\";\n";
+                $htmlContent = '';
                 break;
             case 'html':
-                $phpCode .= "echo \"" . addslashes($token['value']) . "\";\n";
+                if ($inHtmlBlock) {
+                    $htmlContent .= $token['value'] . "\n";
+                } else {
+                    $phpCode .= "echo \"" . addslashes($token['value']) . "\";\n";
+                }
+                break;
+            case 'import':
+                // Import the script into the script that is importing it.
+                $importedFileName = $token['path'];
+                $importedCode = file_get_contents($importedFileName);
+                $importedTokens = parse($importedCode);
+                compile($importedTokens, $importedFileName);
+                $phpCode .= "require '$importedFileName.php';\n";
                 break;
             case 'print':
                 // Check if the value is a variable by looking for a leading $
@@ -60,16 +80,24 @@ function compile($tokens, $fileName)
                 // Add an if statement with the condition
                 $phpCode .= "if (" . $token['condition'] . ") {\n";
                 break;
+            case 'elif':
+                // Add an else if statement with the condition
+                $phpCode .= "} elseif (" . $token['condition'] . ") {\n";
+                break;
             case 'else':
                 // Add an else statement
                 $phpCode .= "} else {\n";
                 break;
             case 'end':
-                // Add an end statement
+                // Add an end statement to close the block
                 $phpCode .= "}\n";
                 break;
         }
     }
+    // Create particle directory if it doesn't exist
+    if (!file_exists('particle')) {
+        mkdir('particle');
+    }
     // Write to php file
-    file_put_contents($fileName . '.php', $phpCode);
+    file_put_contents('particle/' . $fileName . '.php', $phpCode);
 }
