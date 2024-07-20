@@ -3,16 +3,25 @@ function parse($code)
 {
     $lines = explode("\n", $code);
     $tokens = [];
-    $inBlock = false;
+    $inPHP = false;
+    $inHTML = false;
     foreach ($lines as $line) {
         if (preg_match('/<\?php/', $line)) {
             $tokens[] = ['type' => 'php_start'];
-            $inBlock = true;
+            $inPHP = true;
+        } elseif (preg_match('/<\?html/', $line)) {
+            $tokens[] = ['type' => 'html_start'];
+            $inHTML = true;
         } elseif (preg_match('/\?>/', $line)) {
-            $tokens[] = ['type' => 'php_end'];
-            $inBlock = false;
-        } elseif (!$inBlock) {
-            if (preg_match('/print\s+(.*)/', $line, $matches)) {
+            if ($inPHP) {
+                $tokens[] = ['type' => 'endphp'];
+                $inPHP = false;
+            } elseif ($inHTML) {
+                $tokens[] = ['type' => 'html_end'];
+                $inHTML = false;
+            }
+        } elseif (!$inPHP && !$inHTML) {
+            if (preg_match('/print\s+(.*)/', $line, $matches) || preg_match('/echo\s+(.*)/', $line, $matches)) {
                 $tokens[] = ['type' => 'print', 'value' => $matches[1]];
             } elseif (preg_match('/match\s+"([^"]+)"\s+with\s+"([^"]+)"(?:\s+as\s+([a-zA-Z_][a-zA-Z0-9_]*))?/', $line, $matches)) {
                 $token = [
@@ -49,8 +58,10 @@ function parse($code)
                 // Handle unrecognized lines
                 echo "Error: Unrecognized line '$line'\n";
             }
-        } else {
+        } elseif ($inPHP) {
             $tokens[] = ['type' => 'php', 'value' => $line];
+        } elseif ($inHTML) {
+            $tokens[] = ['type' => 'html', 'value' => $line];
         }
     }
     return $tokens;
