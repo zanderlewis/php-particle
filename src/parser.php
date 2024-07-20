@@ -39,7 +39,7 @@ function parse($code)
             } elseif (trim($line) === '') {
                 // Ignore empty lines
 
-            } elseif /* Variables */ (preg_match('/let\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(.*)/', $line, $matches)) {
+            } elseif /* Variables */ (preg_match('/and\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(.*)/', $line, $matches)) {
                 $tokens[] = ['type' => 'variable', 'name' => $matches[1], 'value' => $matches[2]];
             } elseif /* If statement */ (preg_match('/if\s+(.*)/', $line, $matches)) {
                 // Extract the condition and transform variables for PHP

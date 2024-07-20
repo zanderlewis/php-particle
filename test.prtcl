@@ -1,11 +1,11 @@
 // This is a comment in Particle
-let greeting = "Hello, World!"
+var greeting = "Hello, World!"
 print $greeting
 
 echo "This is a display message."
 
 // Variable declaration and conditional logic
-let number = 4
+var number = 4
 if number > 5
     print "Number is greater than 5."
 else
