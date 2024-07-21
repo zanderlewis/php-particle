@@ -1,5 +1,5 @@
 # Particle
-![loc](https://img.shields.io/endpoint?url=https://ghloc.vercel.app/api/zanderlewis/php-particle/badge?filter=.php$&label=Lines_of_Code_(PHP))
+![loc](https://img.shields.io/endpoint?url=https://ghloc.vercel.app/api/zanderlewis/php-particle/badge?filter=.php$&label=Lines%20of%20Code%20(PHP))
 
 The Particle programming language.
 
