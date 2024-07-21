@@ -5,4 +5,4 @@ The Particle programming language.
 
 ## Table of Contents
 - [Particle](#particle)
- - [About](#about)
+  - [About](#about)
