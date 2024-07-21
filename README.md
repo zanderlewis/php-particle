@@ -4,4 +4,5 @@
 The Particle programming language.
 
 ## Table of Contents
-null
+- [Particle](#particle)
+-- [About](#about)
