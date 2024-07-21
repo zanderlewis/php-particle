@@ -1,5 +1,5 @@
 # Particle
-![](https://tokei.rs/b1/github/zanderlewis/php-particle)
+![loc](https://img.shields.io/endpoint?url=https://ghloc.vercel.app/api/zanderlewis/php-particle/badge?filter=.php$)
 
 The Particle programming language.
 
